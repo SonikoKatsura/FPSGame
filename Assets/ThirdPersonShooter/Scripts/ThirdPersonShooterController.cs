@@ -70,33 +70,19 @@ public class ThirdPersonShooterController : MonoBehaviour
         Vector2 screenCenterPoint = new Vector2(Screen.width / 2f, Screen.height / 2f);
         Ray ray = Camera.main.ScreenPointToRay(screenCenterPoint);
 
+        // Actualizar el bloque donde se realiza el Raycast
         if (Physics.Raycast(ray, out RaycastHit raycastHit, 999f, aimColliderMask))
         {
-            if (Vector3.Dot(ray.direction, Vector3.forward) > 0) // Si estás mirando hacia adelante (en dirección positiva del eje Z)
+            if (raycastHit.distance >= aimDistance)
             {
-                if (raycastHit.point.z > spawnBulletPos.position.z + aimDistance)
-                {
-                    debugTransform.position = raycastHit.point;
-                    mouseWorldPosition = raycastHit.point;
-                }
-                else
-                {
-                    debugTransform.position = ray.GetPoint(100);
-                    mouseWorldPosition = ray.GetPoint(100);
-                }
+                debugTransform.position = raycastHit.point;
+                mouseWorldPosition = raycastHit.point;
             }
-            else // Si estás mirando hacia atrás (en dirección negativa del eje Z)
+            else
             {
-                if (raycastHit.point.z < spawnBulletPos.position.z - aimDistance)
-                {
-                    debugTransform.position = raycastHit.point;
-                    mouseWorldPosition = raycastHit.point;
-                }
-                else
-                {
-                    debugTransform.position = ray.GetPoint(100);
-                    mouseWorldPosition = ray.GetPoint(100);
-                }
+                // Assign default position if collision point is too close
+                debugTransform.position = ray.GetPoint(100);
+                mouseWorldPosition = ray.GetPoint(100);
             }
         }
         else
@@ -104,6 +90,7 @@ public class ThirdPersonShooterController : MonoBehaviour
             debugTransform.position = ray.GetPoint(100);
             mouseWorldPosition = ray.GetPoint(100);
         }
+
         if (aimInputs.aim)
         {
             //change camera and sensitivity
